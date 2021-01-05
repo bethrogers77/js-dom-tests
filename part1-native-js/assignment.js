@@ -1,7 +1,7 @@
 // Define a function named createDiv that takes no arguments.
 // Return a <div> element.
 function createDiv() {
-
+  return document.createElement("div");
 }
 
 
@@ -10,7 +10,9 @@ function createDiv() {
 //
 // Return a <div> element with the given className.
 function createDivWithClass(className) {
-
+    const divElement = document.createElement("div");
+    divElement.className = className;
+    return divElement;
 }
 
 
@@ -23,7 +25,15 @@ function createDivWithClass(className) {
 //     TIP: Applying a CSS class means adding on top of what's already there.
 //   * Make no change otherwise
 function updateTodoList(todoList) {
-
+    const listItems = todoList.getElementsByTagName("li");
+    for (let i = 0; i < listItems.length; i += 1) {
+      const item = listItems[i];
+      if (item.textContent.startsWith("COMPLETED")) {
+        item.remove();
+      } else if (item.textContent.startsWith("URGENT")) {
+        item.className = item.className + " important"
+      }
+    }
 }
 
 
@@ -55,6 +65,22 @@ function updateTodoList(todoList) {
 //      <li><a href="https://www.galvanize.com">Galvanize</a></li>
 //    </ul>
 function createList(sites) {
+    const ulElement = document.createElement("ul");
+    for (const title in sites ){
+//create li 
+    const liElement = document.createElement("li");
+//create an <a
+     const aElement = document.createElement("a");
+//set href on <a
+     aElement.setAttribute("href", sites[title])
+//set content on <a 
+    aElement.textContent=title;
+//add a to li
+    liElement.appendChild(aElement); 
+//appendchild to add 
+    ulElement.appendChild(liElement);
+  }
+  return ulElement; 
 
 }
 
@@ -83,7 +109,28 @@ function createList(sites) {
 // TIP: Assume that if there's an opening double quote, there's a closing
 // double quote as well.
 function extractQuote(article) {
-
+  //get the paragraph from each article and take in one article 
+  let paraTag = article.getElementsByTagName('p')[0];
+  //check the paragraph for double quotes and extract it out 
+    let paraIndStart = paraTag.textContent.indexOf('"');
+  //find the end of the double quotes
+      let paraIndEnd = paraTag.textContent.indexOf('"',paraIndStart + 1);
+  //get the text      
+      let pString = paraTag.textContent
+  //find the start and end of the quote      
+  if (paraIndStart > -1 ) {
+    const newQuote = pString.slice(paraIndStart, paraIndEnd + 1);
+ //create block quote variable   
+    const blockquote = document.createElement("blockquote");
+ //add the extracted quote text to the blockquote element     
+    blockquote.textContent = newQuote; 
+ //replace the paragraph with the block quote
+    article.replaceChild(blockquote, paraTag)    
+    return article; 
+  }
+  else{
+    return article;
+  }    
 }
 
 
@@ -136,5 +183,37 @@ function extractQuote(article) {
 // TIP: Assume that the elements of the data array are equal in length.
 // non working copy
 function createTable(data) {
+ //create table DOM element  
+  console.log(data.length)
+//create the table using the CreateElement(' ') method   
+let t = document.createElement('TABLE');
+//create the head using CreateElement('THEAD') or CreateThead
+let header = document.createElement('THEAD');
+//create body using the CreateElement('TBODY') 
+let body = document.createElement('TBODY');
+//create the footer using the CreateElement('TFOOT') or CreateTfoot
+let tfooter = document.createElement('TFOOT');
+let row0 = createRow(data[0], 'TH')
+header.appendChild(row0)  
+let rowlast = createRow(data[data.length - 1]);
+tfooter.appendChild(rowlast)
+for (let i = 1; i < data.length - 1; i +=1) {
+  let rowNumber = createRow(data[i])
+  body.appendChild(rowNumber);
+}
+t.appendChild(header);
+t.appendChild(body);
+t.appendChild(tfooter);
+return t  
+}
 
+function createRow(dataRow, cellType = 'TD'){
+  let row1 = document.createElement('TR');
+  for (let i = 0; i < dataRow.length; i +=1){
+    let element = dataRow[i]
+    let tD = document.createElement(cellType);
+    tD.textContent = element;
+    row1.appendChild(tD);  
+  }
+  return row1;
 }
